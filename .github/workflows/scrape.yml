@@ -1,9 +1,12 @@
-name: Gold Price Scraper
+name: Gold Scraper Test
+
+permissions:
+  contents: write
 
 on:
   schedule:
-    - cron: "0 6,8,10,12,14,16,18 * * *"     # 08,10,12,14,16,18,20 local time
-    - cron: "30 14 * * *"                    # 17:30 local time
+    # Run every minute for testing
+    - cron: "* * * * *"
   workflow_dispatch:
 
 jobs:
