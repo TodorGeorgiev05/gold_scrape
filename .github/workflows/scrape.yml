@@ -38,3 +38,4 @@ jobs:
             git push
           else
             echo "CSV not found, skipping commit"
+          fi
