@@ -1,11 +1,8 @@
-name: Gold Scraper Test
-
-permissions:
-  contents: write
+name: Gold Scraper
 
 on:
   schedule:
-    # Run every minute for testing
+    # For testing: every minute
     - cron: "* * * * *"
   workflow_dispatch:
 
@@ -34,6 +31,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add gold_prices.csv
-          git commit -m "Update gold_prices.csv [skip ci]" || echo "No changes to commit"
+          git add gold_prices_*.csv
+          git commit -m "Add new gold CSV [skip ci]" || echo "No changes to commit"
           git push
