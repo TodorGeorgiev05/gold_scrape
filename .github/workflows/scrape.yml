@@ -3,7 +3,7 @@ name: Gold Price Scraper
 on:
   schedule:
     - cron: "0 6,8,10,12,14,16,18 * * *"     # 08,10,12,14,16,18,20 local time
-    - cron: "28 15 * * *"                    # 17:28 local time
+    - cron: "30 14 * * *"                    # 17:30 local time
   workflow_dispatch:
 
 jobs:
