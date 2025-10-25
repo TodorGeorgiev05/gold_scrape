@@ -1,9 +1,9 @@
-name: Gold Scraper
+name: Gold Price Scraper
 
 on:
   schedule:
-    - cron: "0 8,10,12,14,16,18,20 * * *" # Runs at 08:00, 10:00, ..., 20:00 UTC
-    - cron: "20 17 * * *" 
+    - cron: "0 6,8,10,12,14,16,18 * * *"     # 08,10,12,14,16,18,20 local time
+    - cron: "22 15 * * *"                    # 17:20 local time
   workflow_dispatch:
 
 jobs:
@@ -17,18 +17,22 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12
+          python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run scraper
-        run: python scrape_all.py
-
-      - name: Commit CSV
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add gold_prices.csv
-          git commit -m "Update gold prices"
-          git push
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scraping scripts
+        run: |
+          python tavex1.py
+          python tavex100.py
+          python zlaten.py
+          python topgold.py
+
+      - name: Upload CSV as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: gold-prices
+          path: gold_prices.csv
