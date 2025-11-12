@@ -11,7 +11,7 @@
 
   <script>
   // === CONFIGURATION ===
-  const CSV_URL = "https://github.com/TodorGeorgiev05/gold_scrape/blob/main/gold_prices.csv"; // <- change to your real raw CSV URL
+  const CSV_URL = "https://raw.githubusercontent.com/todorgeorgiev05/gold-scraper/main/gold_prices.csv"; // <- change to your real raw CSV URL
   const TIMEZONE_OFFSET = 3 * 60 * 60 * 1000; // adjust if your timestamps include +03:00, etc.
 
   // === HELPER FUNCTIONS ===
