@@ -1,99 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Gold Prices Plot</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+<h2>Gold Prices</h2>
+<div id="chart" style="width: 100%; height: 600px;"></div>
+
 <script>
-async function loadAndPlot() {
-  const CSV_URL = "https://raw.githubusercontent.com/todorgeorgiev05/gold-scraper/main/gold_prices.csv"; // <- change to your real raw CSV URL;
+// RAW CSV link from GitHub
+const csvUrl = "https://raw.githubusercontent.com/TodorGeorgiev05/gold_scrape/main/gold_prices.csv";
 
-  function parseCSV(text) {
-    const lines = text.trim().split("\n");
-    const headers = lines[0].split("\t");
+// Fetch CSV
+fetch(csvUrl)
+    .then(response => response.text())
+    .then(csvText => {
+        const rows = csvText.trim().split("\n");
 
-    return lines.slice(1).map(line => {
-      const parts = line.split("\t");
-      const row = {};
-      headers.forEach((h, i) => row[h] = parts[i]);
-      return row;
-    });
-  }
+        // Parse header
+        const header = rows[0].split(",");
 
-  function interpolateHourly(data) {
-    const grouped = {};
+        // Arrays
+        let timestamps = [];
+        let buy = [];
+        let sell = [];
+        let site = [];
 
-    for (const row of data) {
-      if (!grouped[row.site]) grouped[row.site] = [];
+        // Parse rows
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(",");
 
-      grouped[row.site].push({
-        t: new Date(Date.parse(row.timestamp)), // fixed
-        buy: parseFloat(row.buy),
-        sell: parseFloat(row.sell)
-      });
-    }
-
-    const hourly = {};
-    for (const site in grouped) {
-      const arr = grouped[site].sort((a, b) => a.t - b.t);
-
-      const start = new Date(arr[0].t);
-      start.setMinutes(0, 0, 0);
-
-      const end = new Date(arr[arr.length - 1].t);
-      end.setMinutes(0, 0, 0);
-
-      const result = [];
-
-      for (let t = new Date(start); t <= end; t = new Date(t.getTime() + 3600000)) {
-        let before = null, after = null;
-
-        for (const p of arr) {
-          if (p.t <= t) before = p;
-          if (!after && p.t >= t) after = p;
+            timestamps.push(cols[0]);
+            site.push(cols[1]);
+            buy.push(parseFloat(cols[2]));
+            sell.push(parseFloat(cols[3]));
         }
 
-        if (before && after) {
-          if (before.t.getTime() === after.t.getTime()) {
-            result.push({ t, buy: before.buy, sell: before.sell });
-          } else {
-            const r = (t - before.t) / (after.t - before.t);
-            result.push({
-              t,
-              buy: before.buy + (after.buy - before.buy) * r,
-              sell: before.sell + (after.sell - before.sell) * r
-            });
-          }
-        }
-      }
+        // Create Plotly trace for BUY
+        const buyTrace = {
+            x: timestamps,
+            y: buy,
+            mode: "lines+markers",
+            name: "Buy Price",
+            type: "scatter"
+        };
 
-      hourly[site] = result;
-    }
+        // Create Plotly trace for SELL
+        const sellTrace = {
+            x: timestamps,
+            y: sell,
+            mode: "lines+markers",
+            name: "Sell Price",
+            type: "scatter"
+        };
 
-    return hourly;
-  }
-
-  const raw = await fetch(CSV_URL).then(r => r.text());
-  const data = parseCSV(raw);
-  const hourly = interpolateHourly(data);
-
-  const traces = [];
-  for (const site in hourly) {
-    traces.push({
-      x: hourly[site].map(p => p.t),
-      y: hourly[site].map(p => p.buy),
-      mode: "lines+markers",
-      name: `${site} buy`
-    });
-    traces.push({
-      x: hourly[site].map(p => p.t),
-      y: hourly[site].map(p => p.sell),
-      mode: "lines+markers",
-      name: `${site} sell`
-    });
-  }
-
-  Plotly.newPlot("plot", traces, {
-    title: "Gold Prices (Hourly Interpolated)",
-    xaxis: { title: "Time" },
-    yaxis: { title: "Price" },
-    hovermode: "x unified"
-  });
-}
-
-loadAndPlot();
+        // Plot
+        Plotly.newPlot("chart", [buyTrace, sellTrace], {
+            title: "Gold Prices Over Time",
+            xaxis: { title: "Time" },
+            yaxis: { title: "Price (BGN)" }
+        });
+    })
+    .catch(err => console.error("CSV load error:", err));
 </script>
+
+</body>
+</html>
