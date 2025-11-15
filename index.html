@@ -1,120 +1,99 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Gold Prices Plot</title>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body style="font-family: sans-serif; margin: 40px;">
-  <h2>Gold Prices (Hourly, Interpolated)</h2>
-  <div id="plot" style="width:100%;max-width:1000px;height:600px;"></div>
+<script>
+async function loadAndPlot() {
+  const CSV_URL = "https://raw.githubusercontent.com/username/repo/main/data.csv";
 
-  <script>
-  // === CONFIGURATION ===
-  const CSV_URL = "https://raw.githubusercontent.com/todorgeorgiev05/gold-scraper/main/gold_prices.csv"; // <- change to your real raw CSV URL
-  const TIMEZONE_OFFSET = 3 * 60 * 60 * 1000; // adjust if your timestamps include +03:00, etc.
-
-  // === HELPER FUNCTIONS ===
   function parseCSV(text) {
     const lines = text.trim().split("\n");
-    const headers = lines[0].split(/\s+/);
+    const headers = lines[0].split("\t");
+
     return lines.slice(1).map(line => {
-      const parts = line.split(/\s+/);
-      const obj = {};
-      headers.forEach((h, i) => obj[h] = parts[i]);
-      return obj;
+      const parts = line.split("\t");
+      const row = {};
+      headers.forEach((h, i) => row[h] = parts[i]);
+      return row;
     });
   }
 
-  function roundToHour(date) {
-    const d = new Date(date);
-    d.setMinutes(0, 0, 0);
-    return d;
-  }
-
-  function interpolateToHourly(data) {
-    // group by site
+  function interpolateHourly(data) {
     const grouped = {};
+
     for (const row of data) {
-      const site = row.site;
-      if (!grouped[site]) grouped[site] = [];
-      grouped[site].push({
-        t: new Date(row.timestamp),
+      if (!grouped[row.site]) grouped[row.site] = [];
+
+      grouped[row.site].push({
+        t: new Date(Date.parse(row.timestamp)), // fixed
         buy: parseFloat(row.buy),
         sell: parseFloat(row.sell)
       });
     }
 
-    const hourlyData = {};
+    const hourly = {};
     for (const site in grouped) {
-      const siteData = grouped[site].sort((a, b) => a.t - b.t);
-      const start = roundToHour(siteData[0].t);
-      const end = roundToHour(siteData[siteData.length - 1].t);
-      const points = [];
+      const arr = grouped[site].sort((a, b) => a.t - b.t);
 
-      for (let t = new Date(start); t <= end; t = new Date(t.getTime() + 3600 * 1000)) {
-        // find nearest points before and after
+      const start = new Date(arr[0].t);
+      start.setMinutes(0, 0, 0);
+
+      const end = new Date(arr[arr.length - 1].t);
+      end.setMinutes(0, 0, 0);
+
+      const result = [];
+
+      for (let t = new Date(start); t <= end; t = new Date(t.getTime() + 3600000)) {
         let before = null, after = null;
-        for (const p of siteData) {
+
+        for (const p of arr) {
           if (p.t <= t) before = p;
-          if (p.t >= t) { after = p; break; }
+          if (!after && p.t >= t) after = p;
         }
 
         if (before && after) {
           if (before.t.getTime() === after.t.getTime()) {
-            points.push({ t, buy: before.buy, sell: before.sell });
+            result.push({ t, buy: before.buy, sell: before.sell });
           } else {
-            const ratio = (t - before.t) / (after.t - before.t);
-            const interpBuy = before.buy + (after.buy - before.buy) * ratio;
-            const interpSell = before.sell + (after.sell - before.sell) * ratio;
-            points.push({ t, buy: interpBuy, sell: interpSell });
+            const r = (t - before.t) / (after.t - before.t);
+            result.push({
+              t,
+              buy: before.buy + (after.buy - before.buy) * r,
+              sell: before.sell + (after.sell - before.sell) * r
+            });
           }
-        } else if (before) {
-          points.push({ t, buy: before.buy, sell: before.sell });
-        } else if (after) {
-          points.push({ t, buy: after.buy, sell: after.sell });
         }
       }
-      hourlyData[site] = points;
+
+      hourly[site] = result;
     }
-    return hourlyData;
+
+    return hourly;
   }
 
-  async function main() {
-    const text = await fetch(CSV_URL).then(r => r.text());
-    const data = parseCSV(text);
-    const hourly = interpolateToHourly(data);
+  const raw = await fetch(CSV_URL).then(r => r.text());
+  const data = parseCSV(raw);
+  const hourly = interpolateHourly(data);
 
-    const traces = [];
-    for (const site in hourly) {
-      const d = hourly[site];
-      const times = d.map(p => p.t);
-      const buys = d.map(p => p.buy);
-      const sells = d.map(p => p.sell);
-
-      traces.push({
-        x: times,
-        y: buys,
-        mode: "lines+markers",
-        name: `${site} (buy)`
-      });
-      traces.push({
-        x: times,
-        y: sells,
-        mode: "lines+markers",
-        name: `${site} (sell)`
-      });
-    }
-
-    Plotly.newPlot("plot", traces, {
-      title: "Gold Prices by Site (Hourly, Interpolated)",
-      xaxis: { title: "Time" },
-      yaxis: { title: "Price (BGN)" },
-      hovermode: "x unified"
+  const traces = [];
+  for (const site in hourly) {
+    traces.push({
+      x: hourly[site].map(p => p.t),
+      y: hourly[site].map(p => p.buy),
+      mode: "lines+markers",
+      name: `${site} buy`
+    });
+    traces.push({
+      x: hourly[site].map(p => p.t),
+      y: hourly[site].map(p => p.sell),
+      mode: "lines+markers",
+      name: `${site} sell`
     });
   }
 
-  main();
-  </script>
-</body>
-</html>
+  Plotly.newPlot("plot", traces, {
+    title: "Gold Prices (Hourly Interpolated)",
+    xaxis: { title: "Time" },
+    yaxis: { title: "Price" },
+    hovermode: "x unified"
+  });
+}
+
+loadAndPlot();
+</script>
