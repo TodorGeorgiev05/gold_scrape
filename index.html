@@ -7,64 +7,98 @@
 </head>
 <body>
 
-<h2>Gold Prices</h2>
-<div id="chart" style="width: 100%; height: 600px;"></div>
+<h1>Gold Prices by Type</h1>
+<div id="charts"></div>
 
 <script>
-// RAW CSV link from GitHub
 const csvUrl = "https://raw.githubusercontent.com/TodorGeorgiev05/gold_scrape/main/gold_prices.csv";
 
-// Fetch CSV
 fetch(csvUrl)
     .then(response => response.text())
     .then(csvText => {
         const rows = csvText.trim().split("\n");
+        const headers = rows[0].split(",");
 
-        // Parse header
-        const header = rows[0].split(",");
+        // Data grouped by gold type
+        const dataBySite = {};
 
-        // Arrays
-        let timestamps = [];
-        let buy = [];
-        let sell = [];
-        let site = [];
-
-        // Parse rows
         for (let i = 1; i < rows.length; i++) {
-            const cols = rows[i].split(",");
+            const [timestamp, site, buy, sell] = rows[i].split(",");
 
-            timestamps.push(cols[0]);
-            site.push(cols[1]);
-            buy.push(parseFloat(cols[2]));
-            sell.push(parseFloat(cols[3]));
+            if (!dataBySite[site]) {
+                dataBySite[site] = [];
+            }
+
+            dataBySite[site].push({
+                timestamp: new Date(timestamp),
+                buy: parseFloat(buy),
+                sell: parseFloat(sell)
+            });
         }
 
-        // Create Plotly trace for BUY
-        const buyTrace = {
-            x: timestamps,
-            y: buy,
-            mode: "lines+markers",
-            name: "Buy Price",
-            type: "scatter"
-        };
+        // Function to keep ONE record per hour (latest)
+        function keepOnePerHour(records) {
+            const filtered = {};
+            for (const r of records) {
+                const key =
+                    r.timestamp.getFullYear() +
+                    "-" +
+                    (r.timestamp.getMonth() + 1) +
+                    "-" +
+                    r.timestamp.getDate() +
+                    " " +
+                    r.timestamp.getHours();
 
-        // Create Plotly trace for SELL
-        const sellTrace = {
-            x: timestamps,
-            y: sell,
-            mode: "lines+markers",
-            name: "Sell Price",
-            type: "scatter"
-        };
+                // always take the latest within the hour
+                filtered[key] = r;
+            }
+            return Object.values(filtered)
+                .sort((a, b) => a.timestamp - b.timestamp);
+        }
 
-        // Plot
-        Plotly.newPlot("chart", [buyTrace, sellTrace], {
-            title: "Gold Prices Over Time",
-            xaxis: { title: "Time" },
-            yaxis: { title: "Price (BGN)" }
-        });
-    })
-    .catch(err => console.error("CSV load error:", err));
+        const chartsDiv = document.getElementById("charts");
+
+        // Create a chart for each gold type
+        for (const site in dataBySite) {
+            let records = dataBySite[site];
+
+            // downsample
+            records = keepOnePerHour(records);
+
+            const timestamps = records.map(r => r.timestamp);
+            const buy = records.map(r => r.buy);
+            const sell = records.map(r => r.sell);
+
+            // create container
+            const div = document.createElement("div");
+            div.id = site;
+            div.style = "width: 100%; height: 500px; margin-bottom: 50px;";
+            chartsDiv.appendChild(div);
+
+            Plotly.newPlot(
+                site,
+                [
+                    {
+                        x: timestamps,
+                        y: buy,
+                        mode: "lines+markers",
+                        name: site + " Buy"
+                    },
+                    {
+                        x: timestamps,
+                        y: sell,
+                        mode: "lines+markers",
+                        name: site + " Sell"
+                    }
+                ],
+                {
+                    title: site + " Prices (1 point per hour)",
+                    xaxis: { title: "Time" },
+                    yaxis: { title: "Price (BGN)" }
+                }
+            );
+        }
+    });
 </script>
 
 </body>
