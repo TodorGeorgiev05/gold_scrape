@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gold Prices</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<header>
+  <h2>Gold Prices</h2>
+  <a href="./index.html">← Home</a>
+</header>
+
+<div class="card">
+  <div class="ranges">
+    <button data-days="7">7D</button>
+    <button data-days="30">1M</button>
+    <button data-days="365">1Y</button>
+  </div>
+  <p class="muted" id="rangeInfo">Loading...</p>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; align-items:center;">
+  <label>
+    <span class="muted">Chart</span><br>
+    <select id="seriesSelect"></select>
+  </label>
+
+  <label>
+    <span class="muted">Show</span><br>
+    <select id="modeSelect">
+      <option value="buy">Buy</option>
+      <option value="sell">Sell</option>
+      <option value="both">Buy + Sell</option>
+    </select>
+  </label>
+</div>
+  <canvas id="chart" height="120"></canvas>
+  <p class="muted" id="error" style="display:none;"></p>
+</div>
+
+<div class="card">
+  <h3>Latest prices</h3>
+  <table id="priceTable">
+    <thead>
+      <tr>
+        <th>Seller</th>
+        <th>Buy</th>
+        <th>Sell</th>
+        <th>Spread</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+let history = [];
+let chart;
+
+const seriesSelect = document.getElementById("seriesSelect");
+const modeSelect = document.getElementById("modeSelect");
+
+fetch("./data/history.json", { cache: "no-store" })
+  .then(r => {
+    if (!r.ok) throw new Error("history.json not found. Run the action / build JSON first.");
+    return r.json();
+  })
+  .then(data => {
+    history = Array.isArray(data) ? data : [];
+    if (history.length === 0) {
+      document.getElementById("rangeInfo").textContent = "No data yet.";
+      return;
+    }
+
+    setupSeriesDropdown(history);
+    setRange(7);
+  })
+  .catch(err => {
+    document.getElementById("rangeInfo").textContent = "Failed to load data.";
+    console.error(err);
+  });
+
+document.querySelectorAll(".ranges button").forEach(btn => {
+  btn.onclick = () => setRange(+btn.dataset.days);
+});
+
+seriesSelect.onchange = () => refreshView();
+modeSelect.onchange = () => refreshView();
+
+function setupSeriesDropdown(rows) {
+  // Build list of sellers (series) + one special option
+  const sellers = [...new Set(rows.map(r => r.seller))].sort();
+
+  seriesSelect.innerHTML = "";
+
+  for (const s of sellers) {
+    seriesSelect.add(new Option(prettySeller(s), s));
+  }
+
+  // default
+  seriesSelect.value = "tavex_1g";
+  modeSelect.value = "both";
+}
+
+let currentFiltered = [];
+function setRange(days) {
+  document.querySelectorAll(".ranges button").forEach(b => b.classList.remove("active"));
+  document.querySelector(`[data-days="${days}"]`)?.classList.add("active");
+
+  const now = Date.now();
+  let filtered = history.filter(r => now - new Date(r.timestamp).getTime() <= days * 86400000);
+
+  const info = document.getElementById("rangeInfo");
+  if (filtered.length === 0) {
+    filtered = history;
+    info.textContent = `Showing max available data (${history.length} points)`;
+  } else {
+    info.textContent = `Showing last ${days} days (${filtered.length} points)`;
+  }
+
+  currentFiltered = filtered;
+  refreshView();
+}
+
+function refreshView() {
+  if (!currentFiltered.length) return;
+
+  renderTable(currentFiltered);
+  renderChart(currentFiltered, seriesSelect.value, modeSelect.value);
+}
+
+function renderTable(rows) {
+  const tbody = document.querySelector("#priceTable tbody");
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = "";
+    return;
+  }
+
+  // latest row per seller
+  const latestBySeller = new Map();
+  for (const r of rows) latestBySeller.set(r.seller, r);
+
+  const latest = [...latestBySeller.values()].sort((a,b) => a.buy_price - b.buy_price);
+
+  tbody.innerHTML = latest.map(r => `
+    <tr>
+      <td>${escapeHtml(prettySeller(r.seller))}</td>
+      <td>${Number(r.buy_price).toFixed(2)}</td>
+      <td>${Number(r.sell_price).toFixed(2)}</td>
+      <td>${(Number(r.sell_price) - Number(r.buy_price)).toFixed(2)}</td>
+    </tr>
+  `).join("");
+}
+
+function renderChart(rows, selectedSeries, mode) {
+  // Build time buckets
+  // If "__cheapest__", choose lowest buy per timestamp
+  let points;
+
+  if (selectedSeries === "__cheapest__") {
+    const byTime = new Map();
+    for (const r of rows) {
+      const t = r.timestamp;
+      const prev = byTime.get(t);
+      if (!prev || r.buy_price < prev.buy_price) byTime.set(t, r);
+    }
+    points = [...byTime.values()];
+  } else {
+    points = rows.filter(r => r.seller === selectedSeries);
+  }
+
+  points.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+  const labels = points.map(r => new Date(r.timestamp).toLocaleString());
+
+  const datasets = [];
+  const titleBase = (selectedSeries === "__cheapest__")
+    ? "Cheapest (market view)"
+    : prettySeller(selectedSeries);
+
+  if (mode === "buy" || mode === "both") {
+    datasets.push({
+      label: `${titleBase} • Buy`,
+      data: points.map(r => r.buy_price),
+    });
+  }
+  if (mode === "sell" || mode === "both") {
+    datasets.push({
+      label: `${titleBase} • Sell`,
+      data: points.map(r => r.sell_price),
+    });
+  }
+
+  if (chart) chart.destroy();
+  chart = new Chart(document.getElementById("chart"), {
+    type: "line",
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      }
+    }
+  });
+}
+
+function prettySeller(s) {
+  // turns "tavex_100g" into "tavex • 100g"
+  return String(s).replaceAll("_", " • ");
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
+}
+</script>
+
+</body>
+</html>

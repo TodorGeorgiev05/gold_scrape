@@ -5,33 +5,46 @@ on:
     - cron: "*/8 * * * *"  # every 8 minutes UTC
   workflow_dispatch:       
 
+permissions:
+  contents: write
+
+concurrency:
+  group: gold-scraper
+  cancel-in-progress: true
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      - name: Run scraper
+      - name: Run scraper (updates CSV)
         run: python scrape_all.py
 
-      - name: Commit and push CSV
+      - name: Build site JSON (last 365 days)
+        run: python scripts/build_site_data.py
+
+      - name: Commit and push
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add gold_prices.csv
-          git commit -m "Update gold_prices.csv [skip ci]" || echo "No changes to commit"
-          git push https://$GITHUB_TOKEN@github.com/TodorGeorgiev05/gold_scrape.git HEAD:main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add gold_prices.csv site/data/*.json
+          git commit -m "Update data" || exit 0
+
+          git push
