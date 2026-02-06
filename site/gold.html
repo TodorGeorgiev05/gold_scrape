@@ -123,13 +123,12 @@ function setupSeries(rows) {
   const sellers = [...new Set(rows.map(r => r.seller))].sort();
 
   $series.innerHTML = "";
-  $series.add(new Option("Cheapest buy (market view)", "__cheapest__"));
 
   for (const s of sellers) {
     $series.add(new Option(prettySeller(s), s));
   }
 
-  $series.value = sellers.includes("tavex_1g") ? "tavex_1g" : "__cheapest__";
+  $series.value = sellers.includes("tavex_1g") ? "tavex_1g" : "";
 }
 
 function applyRange(days) {
