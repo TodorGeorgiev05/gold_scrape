@@ -2,20 +2,18 @@
 
 A simple dashboard for tracking gold prices from Bulgarian sellers and currency exchange rates. Data is automatically collected every 8 minutes and displayed through clean, interactive charts.
 
-**Live Demo:** [https://todorgeorgiev05.github.io/gold_scrape/](https://todorgeorgiev05.github.io/gold_scrape/)
-
-![Project Preview](https://img.shields.io/badge/status-active-success) ![Last Updated](https://img.shields.io/badge/updated-automatically-blue)
+**Live Demo:** [Click](https://todorgeorgiev05.github.io/gold_scrape/site/index.html)
 
 ---
 
-## 🌟 What Does This Do?
+## What Does This Do?
 
 This project automatically tracks and displays:
 
 - **Gold Prices**: Compare buy/sell prices from Bulgarian gold dealers
   - **TopGold**: 100g gold bars (Valcambi)
-  - **Zlaten Rezerv**: 100g gold bars (Valcambi)
-  - **Tavex**: 1g and 100g gold bars (Valcambi)
+  - **Zlaten Rezerv**: 100g gold bars
+  - **Tavex**: 1g and 100g gold bars 
 - **Currency Rates**: Live EUR exchange rates and conversion tool using European Central Bank data
   - Includes BGN (Bulgarian Lev) with fixed peg to EUR at 1.95583
 - **Historical Charts**: View price trends over 7 days, 30 days, or 1 year
@@ -26,11 +24,11 @@ All data updates automatically every 8 minutes via GitHub Actions - no manual wo
 
 ---
 
-## 🚀 Using the Live Site
+## Using the Live Site
 
 ### Gold Prices Dashboard
 
-1. Go to the [Gold Prices page](https://todorgeorgiev05.github.io/gold_scrape/gold.html)
+1. Go to the [Gold Prices page](https://todorgeorgiev05.github.io/gold_scrape/site/index.html)
 2. **Choose a time range**: Click `7D`, `1M`, or `1Y` buttons to see different periods
 3. **Select what to view**: 
    - Pick a seller from the "Chart" dropdown (tavex • 1g, tavex • 100g, topgold • 100g, zlatenrezerv • 100g)
@@ -56,7 +54,7 @@ The chart below shows how EUR exchange rates have changed over the last 30 days.
 
 ---
 
-## 💻 Running Locally
+## Running Locally
 
 Want to run this on your own computer? Here's how:
 
@@ -138,7 +136,7 @@ Or simply double-click: `site/index.html`
 
 ---
 
-## 🔄 Keeping Data Updated
+## Keeping Data Updated
 
 ### Manual Updates
 
@@ -160,7 +158,7 @@ No setup needed - just push to GitHub!
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 gold_scrape/
@@ -188,7 +186,7 @@ gold_scrape/
 
 ---
 
-## 🛠️ How It Works
+## How It Works
 
 ### Data Pipeline
 
@@ -255,7 +253,7 @@ Uses [Frankfurter API](https://www.frankfurter.app/):
 
 ---
 
-## 🎨 Customization
+## Customization
 
 ### Change Colors
 
@@ -296,7 +294,7 @@ Use [crontab.guru](https://crontab.guru/) to create schedules.
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### "No data yet" on gold page
 
@@ -328,7 +326,7 @@ python scripts/build_site_data.py
 
 ---
 
-## 📊 Data Formats
+## Data Formats
 
 ### gold_prices.csv
 ```csv
@@ -358,17 +356,16 @@ timestamp,site,buy,sell
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 - **Report bugs**: Open GitHub issue
 - **Suggest features**: Share ideas in issues
 - **Submit code**: Fork, modify, PR
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
-## 🙏 Credits
+## Credits
 
 - **Data**: TopGold, Zlaten Rezerv, Tavex
 - **Currency**: [Frankfurter API](https://www.frankfurter.app/)
@@ -377,11 +374,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
-## 📧 Questions?
+## Questions?
 
-1. Check [Troubleshooting](#-troubleshooting)
-2. Search [GitHub Issues](https://github.com/todorgeorgiev05/gold_scrape/issues)
-3. Open new issue with details
+1. Search [GitHub Issues](https://github.com/todorgeorgiev05/gold_scrape/issues)
+2. Open new issue with details
 
 ---
 
@@ -391,7 +387,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 - [ ] Price alerts (email/SMS)
 - [ ] Mobile app
 - [ ] Stock tracking
-- [ ] Silver/platinum/palladium
 - [ ] Price predictions
 - [ ] CSV export from website
 - [ ] LBMA comparison
