@@ -143,7 +143,7 @@ function convert() {
   else out = eur * rates[to];
 
   $result.textContent = out.toFixed(2) + " " + to;
-  $rateInfo.textContent = `Rates date: ${ratesDate} • Source: Frankfurter`;
+  $rateInfo.textContent = `Rates date: ${ratesDate} • Source: Frankfurter `;
 }
 
 async function loadChartLast30(symbol) {
