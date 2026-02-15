@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gold Prices</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<header>
+  <h2>Gold</h2>
+  <a href="./index.html">Home</a>
+</header>
+
+<div class="card">
+  <div class="ranges" style="margin-bottom: 10px;">
+    <button data-days="7">7D</button>
+    <button data-days="30">1M</button>
+    <button data-days="365">1Y</button>
+  </div>
+
+  <div class="muted" id="rangeInfo">Loading…</div>
+
+  <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; align-items:end;">
+    <div>
+      <div class="muted" style="margin-bottom:6px;">Chart</div>
+      <select id="seriesSelect"></select>
+    </div>
+
+    <div>
+      <div class="muted" style="margin-bottom:6px;">Show</div>
+      <select id="modeSelect">
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+        <option value="both" selected>Buy + Sell</option>
+      </select>
+    </div>
+    <div style="min-width:220px;">
+      <div id="latestBadge" class="muted"></div>
+    </div>
+  </div>
+
+  <div style="height:420px; margin-top:12px;">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <p class="muted" id="error" style="display:none; margin-top:10px;"></p>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Latest prices</h3>
+  <table id="priceTable">
+    <thead>
+      <tr>
+        <th>Seller</th>
+        <th>Buy</th>
+        <th>Sell</th>
+        <th>Spread</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+let history = [];
+let filtered = [];
+let chart = null;
+
+const $series = document.getElementById("seriesSelect");
+const $mode = document.getElementById("modeSelect");
+const $rangeInfo = document.getElementById("rangeInfo");
+const $latestBadge = document.getElementById("latestBadge");
+const $error = document.getElementById("error");
+
+let currentDays = 365;
+
+init();
+
+function showError(msg) {
+  $error.style.display = "block";
+  $error.textContent = msg;
+}
+
+async function init() {
+  try {
+    const res = await fetch("./data/history.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("Missing data/history.json (run build_site_data.py / GitHub Action).");
+    history = await res.json();
+    if (!Array.isArray(history) || history.length === 0) {
+      $rangeInfo.textContent = "No data yet.";
+      return;
+    }
+
+    setupSeries(history);
+
+    // buttons
+    document.querySelectorAll(".ranges button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentDays = Number(btn.dataset.days);
+        document.querySelectorAll(".ranges button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyRange(currentDays);
+      });
+    });
+
+    $series.addEventListener("change", refresh);
+    $mode.addEventListener("change", refresh);
+
+    // default active
+    document.querySelector('.ranges button[data-days="365"]').classList.add("active");
+
+    applyRange(currentDays);
+  } catch (e) {
+    $rangeInfo.textContent = "Failed to load data.";
+    showError(String(e.message || e));
+  }
+}
+
+function setupSeries(rows) {
+  const sellers = [...new Set(rows.map(r => r.seller))].sort();
+
+  $series.innerHTML = "";
+
+  for (const s of sellers) {
+    $series.add(new Option(prettySeller(s), s));
+  }
+
+  $series.value = sellers.includes("tavex_1g") ? "tavex_1g" : "";
+}
+
+function applyRange(days) {
+  const now = Date.now();
+  let r = history.filter(p => now - new Date(p.timestamp).getTime() <= days * 86400000);
+
+  if (!r.length) {
+    r = history;
+    $rangeInfo.textContent = `Showing max available data (${history.length} points)`;
+  } else {
+    $rangeInfo.textContent = `Showing last ${days} days (${r.length} points)`;
+  }
+
+  filtered = r;
+  refresh();
+}
+
+function refresh() {
+  renderTable(filtered);
+  renderChart(filtered, $series.value, $mode.value);
+}
+
+function renderTable(rows) {
+  const tbody = document.querySelector("#priceTable tbody");
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = "";
+    return;
+  }
+
+  const latestBySeller = new Map();
+  for (const r of rows) latestBySeller.set(r.seller, r);
+
+  const latest = [...latestBySeller.values()]
+    .filter(x => Number.isFinite(Number(x.buy_price)) && Number.isFinite(Number(x.sell_price)))
+    .sort((a, b) => Number(a.buy_price) - Number(b.buy_price));
+
+  tbody.innerHTML = latest.map(r => {
+    const buy = Number(r.buy_price);
+    const sell = Number(r.sell_price);
+    const spread = sell - buy;
+
+    return `
+      <tr>
+        <td>${escapeHtml(prettySeller(r.seller))}</td>
+        <td>${buy.toFixed(2)}</td>
+        <td>${sell.toFixed(2)}</td>
+        <td>${spread.toFixed(2)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderChart(rows, selectedSeries, mode) {
+  if (!rows || rows.length === 0) return;
+
+  let points;
+
+  if (selectedSeries === "__cheapest__") {
+    // for each timestamp keep the cheapest buy across sellers
+    const byTime = new Map();
+    for (const r of rows) {
+      const t = r.timestamp;
+      const prev = byTime.get(t);
+      if (!prev || Number(r.buy_price) < Number(prev.buy_price)) byTime.set(t, r);
+    }
+    points = [...byTime.values()];
+  } else {
+    points = rows.filter(r => r.seller === selectedSeries);
+  }
+
+  points.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+  // make the chart manageable: keep last point per hour
+  points = bucketByHour(points);
+
+  const labels = points.map(p =>
+  new Date(p.timestamp).toLocaleString("bg-BG", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  })
+  );
+
+
+  const title = selectedSeries === "__cheapest__"
+    ? "Cheapest buy"
+    : prettySeller(selectedSeries);
+
+  let buyValues = points.map(p => Number(p.buy_price));
+  let sellValues = points.map(p => Number(p.sell_price));
+
+  // drop insane spikes without ruining the scale
+  buyValues = dropOutliers(buyValues);
+  sellValues = dropOutliers(sellValues);
+
+  // latest badge
+  const last = lastValidPoint(points);
+  if (last) {
+    const buy = Number(last.buy_price);
+    const sell = Number(last.sell_price);
+    //$latestBadge.textContent = `${title}: buy ${buy.toFixed(2)} • sell ${sell.toFixed(2)} • spread ${(sell - buy).toFixed(2)}`;
+  } else {
+    //$latestBadge.textContent = "—";
+  }
+
+  const datasets = [];
+
+  if (mode === "buy" || mode === "both") {
+    datasets.push({
+      label: `${title} • Buy`,
+      data: buyValues,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      borderWidth: 2,
+      tension: 0.25
+    });
+  }
+
+  if (mode === "sell" || mode === "both") {
+    datasets.push({
+      label: `${title} • Sell`,
+      data: sellValues,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      borderWidth: 2,
+      tension: 0.25
+    });
+  }
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("chart"), {
+    type: "line",
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { position: "top" }
+      },
+      scales: {
+        x: {
+          ticks: { maxTicksLimit: 8 },
+          grid: { display: false }
+        },
+        y: {
+          beginAtZero: false,
+          ticks: { maxTicksLimit: 7 }
+        }
+      }
+    }
+  });
+}
+
+function bucketByHour(points) {
+  const map = new Map();
+  for (const p of points) {
+    const d = new Date(p.timestamp);
+    // ISO hour key
+    const key = d.toISOString().slice(0, 13);
+    map.set(key, p); // overwrite keep last in that hour
+  }
+  return [...map.values()].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+}
+
+function dropOutliers(values) {
+  // keep nulls so Chart.js can skip them
+  const clean = values.filter(v => Number.isFinite(v)).sort((a, b) => a - b);
+  if (clean.length < 30) return values;
+
+  const q1 = clean[Math.floor(clean.length * 0.25)];
+  const q3 = clean[Math.floor(clean.length * 0.75)];
+  const iqr = q3 - q1;
+
+  // generous: only remove big spikes
+  const low = q1 - 3 * iqr;
+  const high = q3 + 3 * iqr;
+
+  return values.map(v => (v < low || v > high) ? null : v);
+}
+
+function lastValidPoint(points) {
+  for (let i = points.length - 1; i >= 0; i--) {
+    const p = points[i];
+    if (Number.isFinite(Number(p.buy_price)) && Number.isFinite(Number(p.sell_price))) return p;
+  }
+  return null;
+}
+
+function prettySeller(s) {
+  return String(s).replaceAll("_", " • ");
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[m]));
+}
+</script>
+</body>
+</html>
