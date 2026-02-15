@@ -39,9 +39,9 @@
 
   <label class="muted" for="pairSelect">Choose pair</label><br>
   <select id="pairSelect">
-    <option value="USD">EUR → USD</option>
-    <option value="GBP">EUR → GBP</option>
-    <option value="CZK">EUR → CZK</option>
+    <option value="USD">EUR -> USD</option>
+    <option value="GBP">EUR -> GBP</option>
+    <option value="CZK">EUR -> CZK</option>
   </select>
 
   <p class="muted" id="chartInfo">Loading chart…</p>
@@ -143,7 +143,7 @@ function convert() {
   else out = eur * rates[to];
 
   $result.textContent = out.toFixed(2) + " " + to;
-  $rateInfo.textContent = `Rates date: ${ratesDate} • Source: Frankfurter (BGN fixed to EUR)`;
+  $rateInfo.textContent = `Rates date: ${ratesDate} • Source: Frankfurter`;
 }
 
 async function loadChartLast30(symbol) {
@@ -170,9 +170,17 @@ async function loadChartLast30(symbol) {
     return;
   }
 
-  $chartInfo.textContent = `EUR → ${symbol} • last 30 days`;
+  $chartInfo.textContent = `EUR -> ${symbol} • last 30 days`;
 
-  const labels = points.map(p => p.date);
+  const labels = points.map(p =>
+    new Date(p.date).toLocaleDateString("bg-BG", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })
+  );
+
+
   const values = points.map(p => p.value);
 
   if (chart) chart.destroy();
@@ -181,7 +189,7 @@ async function loadChartLast30(symbol) {
     data: {
       labels,
       datasets: [{
-        label: `EUR → ${symbol}`,
+        label: `EUR -> ${symbol}`,
         data: values,
         tension: 0.25
       }]
