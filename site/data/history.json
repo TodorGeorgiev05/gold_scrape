@@ -219988,5 +219988,29 @@
     "seller": "tavex_100g",
     "buy_price": 12471.0,
     "sell_price": 12256.0
+  },
+  {
+    "timestamp": "2026-03-24T16:52:04+03:00",
+    "seller": "topgold_100g",
+    "buy_price": 12348.0,
+    "sell_price": 12154.0
+  },
+  {
+    "timestamp": "2026-03-24T16:52:04+03:00",
+    "seller": "zlatenrezerv_100g",
+    "buy_price": 12334.17,
+    "sell_price": 12102.79
+  },
+  {
+    "timestamp": "2026-03-24T16:52:04+03:00",
+    "seller": "tavex_1g",
+    "buy_price": 138.0,
+    "sell_price": 125.0
+  },
+  {
+    "timestamp": "2026-03-24T16:52:04+03:00",
+    "seller": "tavex_100g",
+    "buy_price": 12360.0,
+    "sell_price": 12147.0
   }
 ]
