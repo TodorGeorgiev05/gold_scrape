@@ -1,26 +1,26 @@
 [
   {
-    "timestamp": "2026-04-10T23:06:21+03:00",
+    "timestamp": "2026-04-10T23:56:06+03:00",
     "seller": "tavex_1g",
-    "buy_price": 149.0,
+    "buy_price": 148.0,
     "sell_price": 135.0
   },
   {
-    "timestamp": "2026-04-10T23:06:21+03:00",
+    "timestamp": "2026-04-10T23:56:06+03:00",
     "seller": "topgold_100g",
-    "buy_price": 13283.0,
-    "sell_price": 13074.0
+    "buy_price": 13263.0,
+    "sell_price": 13055.0
   },
   {
-    "timestamp": "2026-04-10T23:06:21+03:00",
+    "timestamp": "2026-04-10T23:56:06+03:00",
     "seller": "zlatenrezerv_100g",
-    "buy_price": 13290.2,
-    "sell_price": 13075.53
+    "buy_price": 13271.0,
+    "sell_price": 13058.54
   },
   {
-    "timestamp": "2026-04-10T23:06:21+03:00",
+    "timestamp": "2026-04-10T23:56:06+03:00",
     "seller": "tavex_100g",
-    "buy_price": 13328.0,
-    "sell_price": 13097.0
+    "buy_price": 13288.0,
+    "sell_price": 13060.0
   }
 ]
