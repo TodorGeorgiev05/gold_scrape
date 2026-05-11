@@ -241666,5 +241666,23 @@
     "seller": "tavex_100g",
     "buy_price": 13174.0,
     "sell_price": 12950.0
+  },
+  {
+    "timestamp": "2026-05-11T23:58:59+03:00",
+    "seller": "topgold_100g",
+    "buy_price": 13170.0,
+    "sell_price": 12963.0
+  },
+  {
+    "timestamp": "2026-05-11T23:58:59+03:00",
+    "seller": "tavex_1g",
+    "buy_price": 148.0,
+    "sell_price": 134.0
+  },
+  {
+    "timestamp": "2026-05-11T23:58:59+03:00",
+    "seller": "tavex_100g",
+    "buy_price": 13204.0,
+    "sell_price": 12977.0
   }
 ]
