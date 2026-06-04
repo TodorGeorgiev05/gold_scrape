@@ -247654,5 +247654,17 @@
     "seller": "zlatenrezerv_100g",
     "buy_price": 12624.11,
     "sell_price": 12428.25
+  },
+  {
+    "timestamp": "2026-06-05T02:22:18+03:00",
+    "seller": "topgold_100g",
+    "buy_price": 12607.0,
+    "sell_price": 12409.0
+  },
+  {
+    "timestamp": "2026-06-05T02:22:18+03:00",
+    "seller": "zlatenrezerv_100g",
+    "buy_price": 12615.69,
+    "sell_price": 12414.49
   }
 ]
