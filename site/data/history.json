@@ -1,149 +1,5 @@
 [
   {
-    "timestamp": "2025-10-29 23:27:52+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 125.78,
-    "sell_price": 113.51
-  },
-  {
-    "timestamp": "2025-10-29 23:27:52+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11222.35,
-    "sell_price": 11039.3
-  },
-  {
-    "timestamp": "2025-10-29 23:27:52+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11194.22,
-    "sell_price": 11194.22
-  },
-  {
-    "timestamp": "2025-10-29 23:27:52+00:00",
-    "seller": "zlatenrezerv_100g",
-    "buy_price": 11198.11,
-    "sell_price": 11011.98
-  },
-  {
-    "timestamp": "2025-10-29 23:37:40+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11202.92,
-    "sell_price": 11202.92
-  },
-  {
-    "timestamp": "2025-10-29 23:37:40+00:00",
-    "seller": "zlatenrezerv_100g",
-    "buy_price": 11198.11,
-    "sell_price": 11008.2
-  },
-  {
-    "timestamp": "2025-10-29 23:37:40+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 125.78,
-    "sell_price": 113.51
-  },
-  {
-    "timestamp": "2025-10-29 23:37:40+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11234.11,
-    "sell_price": 11047.99
-  },
-  {
-    "timestamp": "2025-10-29 23:44:57+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11198.83,
-    "sell_price": 11198.83
-  },
-  {
-    "timestamp": "2025-10-29 23:44:57+00:00",
-    "seller": "zlatenrezerv_100g",
-    "buy_price": 11202.34,
-    "sell_price": 10999.71
-  },
-  {
-    "timestamp": "2025-10-29 23:44:57+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 125.78,
-    "sell_price": 113.51
-  },
-  {
-    "timestamp": "2025-10-29 23:44:57+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11234.11,
-    "sell_price": 11047.99
-  },
-  {
-    "timestamp": "2025-10-29 23:50:46+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 125.78,
-    "sell_price": 113.51
-  },
-  {
-    "timestamp": "2025-10-29 23:50:46+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11234.11,
-    "sell_price": 11047.99
-  },
-  {
-    "timestamp": "2025-10-29 23:50:46+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11181.44,
-    "sell_price": 11181.44
-  },
-  {
-    "timestamp": "2025-10-29 23:50:46+00:00",
-    "seller": "zlatenrezerv_100g",
-    "buy_price": 11194.1,
-    "sell_price": 11004.24
-  },
-  {
-    "timestamp": "2025-10-29 23:57:16+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11202.41,
-    "sell_price": 11202.41
-  },
-  {
-    "timestamp": "2025-10-29 23:57:16+00:00",
-    "seller": "zlatenrezerv_100g",
-    "buy_price": 11212.42,
-    "sell_price": 11004.44
-  },
-  {
-    "timestamp": "2025-10-29 23:57:16+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 125.78,
-    "sell_price": 113.51
-  },
-  {
-    "timestamp": "2025-10-29 23:57:16+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11229.5,
-    "sell_price": 11044.93
-  },
-  {
-    "timestamp": "2025-10-30 01:10:19+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11235.64,
-    "sell_price": 11235.64
-  },
-  {
-    "timestamp": "2025-10-30 01:10:19+00:00",
-    "seller": "zlatenrezerv_100g",
-    "buy_price": 11247.08,
-    "sell_price": 11036.62
-  },
-  {
-    "timestamp": "2025-10-30 01:10:19+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 125.78,
-    "sell_price": 113.51
-  },
-  {
-    "timestamp": "2025-10-30 01:10:19+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11219.79,
-    "sell_price": 11034.7
-  },
-  {
     "timestamp": "2025-10-30 02:48:15+00:00",
     "seller": "tavex_100g",
     "buy_price": 11191.16,
@@ -277444,5 +277300,23 @@
     "seller": "tavex_100g",
     "buy_price": 11673.0,
     "sell_price": 11532.0
+  },
+  {
+    "timestamp": "2026-10-30T05:45:37+03:00",
+    "seller": "topgold_100g",
+    "buy_price": 11620.0,
+    "sell_price": 11486.0
+  },
+  {
+    "timestamp": "2026-10-30T05:45:37+03:00",
+    "seller": "tavex_1g",
+    "buy_price": 131.0,
+    "sell_price": 119.0
+  },
+  {
+    "timestamp": "2026-10-30T05:45:37+03:00",
+    "seller": "tavex_100g",
+    "buy_price": 11639.0,
+    "sell_price": 11500.0
   }
 ]
