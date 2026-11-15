@@ -1,149 +1,5 @@
 [
   {
-    "timestamp": "2025-11-14 22:56:03+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 22:56:03+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 22:56:03+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-14 23:11:16+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-14 23:11:16+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 23:11:16+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 23:28:04+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 23:28:04+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 23:28:04+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-14 23:37:32+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 23:37:32+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 23:37:32+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-14 23:44:14+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-14 23:44:14+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 23:44:14+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 23:50:27+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 23:50:27+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 23:50:27+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-14 23:56:32+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
-    "timestamp": "2025-11-14 23:56:32+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-14 23:56:32+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-15 00:59:58+00:00",
-    "seller": "tavex_100g",
-    "buy_price": 11583.83,
-    "sell_price": 11397.72
-  },
-  {
-    "timestamp": "2025-11-15 00:59:58+00:00",
-    "seller": "tavex_1g",
-    "buy_price": 129.87,
-    "sell_price": 117.6
-  },
-  {
-    "timestamp": "2025-11-15 00:59:58+00:00",
-    "seller": "topgold_100g",
-    "buy_price": 11550.08,
-    "sell_price": 11550.08
-  },
-  {
     "timestamp": "2025-11-15 02:27:50+00:00",
     "seller": "topgold_100g",
     "buy_price": 11550.08,
@@ -240841,6 +240697,24 @@
   },
   {
     "timestamp": "2026-11-15T01:51:44+03:00",
+    "seller": "tavex_100g",
+    "buy_price": 11554.0,
+    "sell_price": 11361.0
+  },
+  {
+    "timestamp": "2026-11-15T05:21:57+03:00",
+    "seller": "topgold_100g",
+    "buy_price": 11540.0,
+    "sell_price": 11375.0
+  },
+  {
+    "timestamp": "2026-11-15T05:21:57+03:00",
+    "seller": "tavex_1g",
+    "buy_price": 129.0,
+    "sell_price": 117.0
+  },
+  {
+    "timestamp": "2026-11-15T05:21:57+03:00",
     "seller": "tavex_100g",
     "buy_price": 11554.0,
     "sell_price": 11361.0
