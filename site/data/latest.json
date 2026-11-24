@@ -1,15 +1,15 @@
 [
   {
-    "timestamp": "2026-11-24T04:51:26+03:00",
+    "timestamp": "2026-11-24T14:59:08+03:00",
     "seller": "tavex_1g",
-    "buy_price": 123.0,
-    "sell_price": 112.0
+    "buy_price": 122.0,
+    "sell_price": 111.0
   },
   {
-    "timestamp": "2026-11-24T04:51:26+03:00",
+    "timestamp": "2026-11-24T14:59:08+03:00",
     "seller": "tavex_100g",
-    "buy_price": 11037.0,
-    "sell_price": 10860.0
+    "buy_price": 10886.0,
+    "sell_price": 10711.0
   },
   {
     "timestamp": "2026-11-17T13:39:00+03:00",
